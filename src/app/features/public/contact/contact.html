@@ -1,0 +1,88 @@
+<!-- HERO -->
+<section class="border-b border-gray-100 px-6 py-20 text-center">
+  <div class="mx-auto max-w-xl">
+    <p class="mb-4 text-sm font-medium uppercase tracking-widest text-gray-400">Contact</p>
+    <h1 class="text-4xl font-extrabold tracking-tight text-gray-900">Parlons de votre projet</h1>
+    <p class="mt-5 text-lg text-gray-500">
+      Une question, une demande de démo ou un besoin spécifique ? Notre équipe vous répond sous 24h.
+    </p>
+  </div>
+</section>
+
+<section class="px-6 py-16">
+  <div class="mx-auto max-w-4xl grid gap-12 md:grid-cols-2">
+
+    <!-- Infos contact -->
+    <div>
+      <h2 class="mb-6 text-xl font-bold text-gray-900">Coordonnées</h2>
+      <div class="space-y-5">
+        <div class="flex items-start gap-4">
+          <div class="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-gray-200 bg-gray-50 text-base">✉</div>
+          <div>
+            <p class="text-sm font-medium text-gray-900">Email</p>
+            <p class="text-sm text-gray-500">contact&#64;nexalab.africa</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-4">
+          <div class="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-gray-200 bg-gray-50 text-base">☎</div>
+          <div>
+            <p class="text-sm font-medium text-gray-900">Téléphone</p>
+            <p class="text-sm text-gray-500">+226 00 00 00 00</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-4">
+          <div class="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-gray-200 bg-gray-50 text-base">◎</div>
+          <div>
+            <p class="text-sm font-medium text-gray-900">Localisation</p>
+            <p class="text-sm text-gray-500">Ouagadougou, Burkina Faso</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-4">
+          <div class="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-gray-200 bg-gray-50 text-base">◷</div>
+          <div>
+            <p class="text-sm font-medium text-gray-900">Horaires</p>
+            <p class="text-sm text-gray-500">Lun – Ven, 8h – 18h (WAT)</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Formulaire -->
+    <div>
+      @if (sent()) {
+        <div class="rounded-xl border border-green-200 bg-green-50 p-8 text-center">
+          <div class="mb-3 text-3xl">✓</div>
+          <h3 class="mb-1 font-semibold text-green-800">Message envoyé !</h3>
+          <p class="text-sm text-green-600">Nous vous répondrons dans les 24 heures ouvrées.</p>
+        </div>
+      } @else {
+        <h2 class="mb-6 text-xl font-bold text-gray-900">Envoyer un message</h2>
+        <div class="space-y-4">
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Nom *</label>
+              <input class="input" [(ngModel)]="form.name" placeholder="Votre nom" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+              <input class="input" type="email" [(ngModel)]="form.email" placeholder="vous@exemple.com" />
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Sujet</label>
+            <input class="input" [(ngModel)]="form.subject" placeholder="Ex : Demande de démo" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Message *</label>
+            <textarea class="input" rows="5" [(ngModel)]="form.message"
+              placeholder="Décrivez votre besoin ou votre question…"></textarea>
+          </div>
+          <button class="btn-primary w-full py-2.5" (click)="submit()" [disabled]="sending()">
+            {{ sending() ? 'Envoi en cours…' : 'Envoyer le message' }}
+          </button>
+        </div>
+      }
+    </div>
+
+  </div>
+</section>

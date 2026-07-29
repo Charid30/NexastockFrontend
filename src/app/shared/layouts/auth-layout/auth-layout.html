@@ -1,0 +1,48 @@
+<div class="min-h-screen flex">
+
+  <!-- Panneau gauche — branding -->
+  <div class="hidden lg:flex lg:w-5/12 xl:w-[42%] bg-gray-900 flex-col justify-between p-12">
+
+    <a routerLink="/" class="flex items-center gap-2">
+      <span class="text-xl font-bold tracking-tight text-white">NexaStock</span>
+    </a>
+
+    <div>
+      <h2 class="text-3xl font-extrabold leading-snug text-white">
+        Pilotez votre stock.<br/>
+        <span class="text-gray-400">Partout, à tout moment.</span>
+      </h2>
+      <p class="mt-4 text-sm leading-relaxed text-gray-400">
+        NexaStock centralise la gestion de vos produits, sites et équipes dans une seule plateforme simple, rapide et adaptée à votre activité.
+      </p>
+      <ul class="mt-8 space-y-4">
+        <li class="flex items-center gap-3">
+          <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/10 text-white">▦</span>
+          <span class="text-sm text-gray-300">Gestion multi-sites et multi-équipes</span>
+        </li>
+        <li class="flex items-center gap-3">
+          <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/10 text-white">↕</span>
+          <span class="text-sm text-gray-300">Mouvements de stock en temps réel</span>
+        </li>
+        <li class="flex items-center gap-3">
+          <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/10 text-white">▤</span>
+          <span class="text-sm text-gray-300">Commandes fournisseurs intégrées</span>
+        </li>
+        <li class="flex items-center gap-3">
+          <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/10 text-white">◎</span>
+          <span class="text-sm text-gray-300">Alertes automatiques de rupture</span>
+        </li>
+      </ul>
+    </div>
+
+    <p class="text-xs text-gray-600">&copy; 2026 NexaStock — Tous droits réservés.</p>
+  </div>
+
+  <!-- Panneau droit — formulaire -->
+  <div class="flex flex-1 items-center justify-center bg-white px-6 py-12">
+    <div class="w-full max-w-md">
+      <router-outlet />
+    </div>
+  </div>
+
+</div>

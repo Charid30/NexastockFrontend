@@ -1,0 +1,121 @@
+<!-- HERO -->
+<section class="border-b border-gray-100 px-6 py-24 text-center">
+  <div class="mx-auto max-w-3xl">
+    <div class="mb-6 inline-flex items-center rounded-full border border-gray-200 bg-white px-4 py-1.5 text-xs font-medium text-gray-500">
+      Gestion de stock professionnelle pour les entreprises africaines
+    </div>
+    <h1 class="text-5xl font-extrabold leading-tight tracking-tight text-gray-900 md:text-6xl">
+      Pilotez votre stock.<br/>
+      <span class="text-gray-400">Partout, à tout moment.</span>
+    </h1>
+    <p class="mx-auto mt-6 max-w-xl text-lg text-gray-500">
+      NexaStock centralise la gestion de vos produits, sites et équipes dans une seule plateforme
+      simple, rapide et adaptée à votre activité.
+    </p>
+    <div class="mt-10 flex items-center justify-center gap-4">
+      <a routerLink="/inscription" class="btn-primary px-6 py-3 text-base">Démarrer gratuitement</a>
+      <a routerLink="/fonctionnalites" class="btn-ghost px-6 py-3 text-base text-gray-600">Voir les fonctionnalités →</a>
+    </div>
+  </div>
+</section>
+
+<!-- APERÇU DASHBOARD (placeholder sobre) -->
+<section class="border-b border-gray-100 bg-gray-50 px-6 py-16">
+  <div class="mx-auto max-w-5xl">
+    <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+      <!-- Barre simulée -->
+      <div class="flex items-center gap-2 border-b border-gray-100 bg-gray-50 px-4 py-3">
+        <div class="h-3 w-3 rounded-full bg-gray-200"></div>
+        <div class="h-3 w-3 rounded-full bg-gray-200"></div>
+        <div class="h-3 w-3 rounded-full bg-gray-200"></div>
+        <div class="ml-4 h-3 w-48 rounded bg-gray-200"></div>
+      </div>
+      <!-- Contenu simulé -->
+      <div class="flex divide-x divide-gray-100">
+        <aside class="hidden w-48 shrink-0 p-4 md:block">
+          <div class="mb-4 h-5 w-24 rounded bg-gray-900"></div>
+          @for (i of [1,2,3,4,5]; track i) {
+            <div class="mb-2 flex items-center gap-2">
+              <div class="h-3 w-3 rounded bg-gray-200"></div>
+              <div class="h-3 rounded bg-gray-100" [style.width.px]="50 + i * 10"></div>
+            </div>
+          }
+        </aside>
+        <div class="flex-1 p-6">
+          <div class="mb-6 h-6 w-40 rounded bg-gray-900"></div>
+          <div class="mb-6 grid grid-cols-2 gap-4 md:grid-cols-4">
+            @for (kpi of ['Produits', 'Sites', 'Mouvements', 'Alertes']; track kpi) {
+              <div class="rounded-lg border border-gray-200 p-4">
+                <div class="mb-1 h-2.5 w-16 rounded bg-gray-200"></div>
+                <div class="h-6 w-12 rounded bg-gray-900"></div>
+              </div>
+            }
+          </div>
+          <div class="rounded-lg border border-gray-200">
+            <div class="border-b border-gray-100 px-4 py-3">
+              <div class="h-3 w-32 rounded bg-gray-200"></div>
+            </div>
+            @for (row of [1,2,3]; track row) {
+              <div class="flex items-center gap-4 border-b border-gray-50 px-4 py-3 last:border-0">
+                <div class="h-3 w-32 rounded bg-gray-100"></div>
+                <div class="h-3 w-20 rounded bg-gray-100"></div>
+                <div class="ml-auto h-5 w-14 rounded-full bg-gray-100"></div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FONCTIONNALITÉS -->
+<section class="border-b border-gray-100 px-6 py-20">
+  <div class="mx-auto max-w-5xl">
+    <div class="mb-12 text-center">
+      <h2 class="text-3xl font-bold tracking-tight text-gray-900">Tout ce dont vous avez besoin</h2>
+      <p class="mt-3 text-gray-500">Une plateforme complète, sans complexité inutile.</p>
+    </div>
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      @for (f of features; track f.title) {
+        <div class="rounded-lg border border-gray-200 p-6 transition-colors hover:border-gray-300 hover:bg-gray-50">
+          <div class="mb-3 text-xl text-gray-700">{{ f.icon }}</div>
+          <h3 class="mb-1 font-semibold text-gray-900">{{ f.title }}</h3>
+          <p class="text-sm text-gray-500">{{ f.desc }}</p>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- POUR QUI -->
+<section class="border-b border-gray-100 bg-gray-50 px-6 py-20">
+  <div class="mx-auto max-w-5xl">
+    <div class="mb-12 text-center">
+      <h2 class="text-3xl font-bold tracking-tight text-gray-900">Pour tous les secteurs</h2>
+      <p class="mt-3 text-gray-500">NexaStock s'adapte à votre activité, quelle qu'elle soit.</p>
+    </div>
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      @for (u of useCases; track u.label) {
+        <div class="rounded-lg border border-gray-200 bg-white p-6">
+          <h3 class="mb-1 font-semibold text-gray-900">{{ u.label }}</h3>
+          <p class="text-sm text-gray-500">{{ u.desc }}</p>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section class="px-6 py-24 text-center">
+  <div class="mx-auto max-w-2xl">
+    <h2 class="text-4xl font-extrabold tracking-tight text-gray-900">Prêt à démarrer ?</h2>
+    <p class="mt-4 text-lg text-gray-500">
+      Inscrivez votre entreprise en quelques minutes. Aucune carte bancaire requise.
+    </p>
+    <div class="mt-8 flex items-center justify-center gap-4">
+      <a routerLink="/inscription" class="btn-primary px-8 py-3 text-base">Créer mon espace</a>
+      <a routerLink="/connexion" class="btn-ghost px-8 py-3 text-base text-gray-600">J'ai déjà un compte</a>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,63 @@
+<!-- HERO -->
+<section class="border-b border-gray-100 px-6 py-20 text-center">
+  <div class="mx-auto max-w-2xl">
+    <p class="mb-4 text-sm font-medium uppercase tracking-widest text-gray-400">À propos</p>
+    <h1 class="text-4xl font-extrabold tracking-tight text-gray-900 md:text-5xl">
+      Nous aidons les entreprises africaines à mieux gérer leur stock
+    </h1>
+    <p class="mt-5 text-lg text-gray-500">
+      NexaStock est un produit de NexaLab, un studio technologique dédié à la création d'outils professionnels adaptés aux réalités du marché africain.
+    </p>
+  </div>
+</section>
+
+<!-- MISSION -->
+<section class="border-b border-gray-100 px-6 py-16">
+  <div class="mx-auto max-w-3xl">
+    <div class="grid gap-12 md:grid-cols-2 md:items-start">
+      <div>
+        <h2 class="mb-4 text-2xl font-bold tracking-tight text-gray-900">Notre mission</h2>
+        <p class="text-gray-500 leading-relaxed">
+          Des milliers de TPE et PME en Afrique gèrent encore leur stock sur papier ou avec des tableurs. Résultat : des erreurs, des ruptures, des pertes.
+        </p>
+        <p class="mt-4 text-gray-500 leading-relaxed">
+          NexaStock a été conçu pour changer ça. Une application simple, rapide, et taillée pour les entreprises africaines — qu'il s'agisse d'une épicerie, d'un réseau de boutiques ou d'un distributeur.
+        </p>
+      </div>
+      <div>
+        <h2 class="mb-4 text-2xl font-bold tracking-tight text-gray-900">Notre vision</h2>
+        <p class="text-gray-500 leading-relaxed">
+          Devenir la référence en gestion de stock pour les entreprises d'Afrique francophone. Nous voulons donner à chaque commerçant les mêmes outils que les grandes enseignes, à un prix accessible.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VALEURS -->
+<section class="border-b border-gray-100 bg-gray-50 px-6 py-16">
+  <div class="mx-auto max-w-4xl">
+    <h2 class="mb-10 text-center text-2xl font-bold tracking-tight text-gray-900">Ce qui nous guide</h2>
+    <div class="grid gap-6 sm:grid-cols-3">
+      @for (v of values; track v.title) {
+        <div class="rounded-lg border border-gray-200 bg-white p-6">
+          <div class="mb-3 text-2xl text-gray-700">{{ v.icon }}</div>
+          <h3 class="mb-2 font-semibold text-gray-900">{{ v.title }}</h3>
+          <p class="text-sm text-gray-500">{{ v.desc }}</p>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="px-6 py-20 text-center">
+  <div class="mx-auto max-w-xl">
+    <h2 class="text-3xl font-extrabold tracking-tight text-gray-900">Rejoignez NexaStock</h2>
+    <p class="mt-3 text-gray-500">Des centaines d'entreprises nous font déjà confiance. Pourquoi pas vous ?</p>
+    <div class="mt-8 flex items-center justify-center gap-4">
+      <a routerLink="/inscription" class="btn-primary px-8 py-3 text-base">Créer mon espace</a>
+      <a routerLink="/contact" class="text-sm text-gray-500 underline underline-offset-2 hover:text-gray-800">Nous contacter</a>
+    </div>
+  </div>
+</section>

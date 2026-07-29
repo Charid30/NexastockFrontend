@@ -1,0 +1,119 @@
+<div>
+  <div class="mb-6">
+    <h1 class="text-2xl font-bold text-gray-900">Rapports</h1>
+    <p class="mt-1 text-sm text-gray-500">Analyse de votre stock</p>
+  </div>
+
+  <div class="mb-4 flex gap-1 border-b border-gray-200">
+    <button class="px-4 py-2 text-sm font-medium transition-colors"
+      [class]="tab() === 'valeur' ? 'border-b-2 border-black text-gray-900' : 'text-gray-500 hover:text-gray-700'"
+      (click)="load('valeur')">Valorisation du stock</button>
+    <button class="px-4 py-2 text-sm font-medium transition-colors"
+      [class]="tab() === 'stock_bas' ? 'border-b-2 border-black text-gray-900' : 'text-gray-500 hover:text-gray-700'"
+      (click)="load('stock_bas')">Produits en alerte</button>
+    <button class="px-4 py-2 text-sm font-medium transition-colors"
+      [class]="tab() === 'mouvements' ? 'border-b-2 border-black text-gray-900' : 'text-gray-500 hover:text-gray-700'"
+      (click)="load('mouvements')">Mouvements récents</button>
+  </div>
+
+  @if (loading()) {
+    <div class="card animate-pulse h-48"></div>
+  }
+
+  @if (!loading() && tab() === 'valeur') {
+    @if (valTotal() > 0) {
+      <div class="card mb-4">
+        <p class="text-sm font-medium text-gray-500">Valeur totale du stock (coût)</p>
+        <p class="mt-1 text-3xl font-bold text-gray-900">{{ valTotal() | number:'1.0-0' }}</p>
+      </div>
+    }
+    @if (data().length === 0) {
+      <div class="card text-center py-16"><p class="text-gray-400 text-sm">Aucune donnée disponible.</p></div>
+    } @else {
+      <div class="card p-0 overflow-hidden">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Produit</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Site</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantité</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">P. Achat</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Valeur totale</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            @for (r of data(); track $index) {
+              <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ r.product?.name }}</td>
+                <td class="px-6 py-4 text-sm text-gray-500">{{ r.site?.name }}</td>
+                <td class="px-6 py-4 text-sm text-gray-900">{{ r.quantity }}</td>
+                <td class="px-6 py-4 text-sm text-gray-500">{{ r.product?.cost_price | number:'1.0-2' }}</td>
+                <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ r.cost_value | number:'1.0-0' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  }
+
+  @if (!loading() && tab() === 'stock_bas') {
+    @if (data().length === 0) {
+      <div class="card text-center py-16"><p class="text-gray-400 text-sm">Aucun produit en alerte. Tout est en ordre !</p></div>
+    } @else {
+      <div class="card p-0 overflow-hidden">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Produit</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Site</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantité actuelle</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Seuil minimum</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            @for (r of data(); track $index) {
+              <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ r.product?.name }}</td>
+                <td class="px-6 py-4 text-sm text-gray-500">{{ r.site?.name }}</td>
+                <td class="px-6 py-4 text-sm font-bold text-red-600">{{ r.quantity }}</td>
+                <td class="px-6 py-4 text-sm text-gray-500">{{ r.product?.min_stock_level }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  }
+
+  @if (!loading() && tab() === 'mouvements') {
+    @if (data().length === 0) {
+      <div class="card text-center py-16"><p class="text-gray-400 text-sm">Aucun mouvement disponible.</p></div>
+    } @else {
+      <div class="card p-0 overflow-hidden">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Produit</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Site</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantité</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            @for (r of data(); track $index) {
+              <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4 text-sm text-gray-500">{{ r.created_at | date:'dd/MM/yyyy HH:mm' }}</td>
+                <td class="px-6 py-4 text-sm text-gray-900">{{ typeLabel(r.type) }}</td>
+                <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ r.product?.name }}</td>
+                <td class="px-6 py-4 text-sm text-gray-500">{{ r.sourceSite?.name }}</td>
+                <td class="px-6 py-4 text-sm text-gray-900">{{ r.quantity }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  }
+</div>

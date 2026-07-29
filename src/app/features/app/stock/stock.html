@@ -1,0 +1,196 @@
+<div>
+  <div class="mb-6 flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">Gestion du stock</h1>
+      <p class="mt-1 text-sm text-gray-500">Niveaux et mouvements de stock</p>
+    </div>
+    <div class="flex gap-2">
+      @for (a of actions; track a.key) {
+        <button class="btn-secondary text-sm" (click)="openModal(a.key)">{{ a.label }}</button>
+      }
+    </div>
+  </div>
+
+  <div class="mb-4 flex gap-1 border-b border-gray-200">
+    <button class="px-4 py-2 text-sm font-medium transition-colors"
+      [class]="tab() === 'niveaux' ? 'border-b-2 border-black text-gray-900' : 'text-gray-500 hover:text-gray-700'"
+      (click)="switchTab('niveaux')">Niveaux de stock</button>
+    <button class="px-4 py-2 text-sm font-medium transition-colors"
+      [class]="tab() === 'mouvements' ? 'border-b-2 border-black text-gray-900' : 'text-gray-500 hover:text-gray-700'"
+      (click)="switchTab('mouvements')">Historique des mouvements</button>
+  </div>
+
+  @if (loading()) {
+    <div class="card animate-pulse h-48"></div>
+  }
+
+  @if (!loading() && tab() === 'niveaux') {
+    @if (levels().length === 0) {
+      <div class="card text-center py-16">
+        <p class="text-gray-400 text-sm">Aucun niveau de stock enregistré. Faites une entrée de stock pour commencer.</p>
+      </div>
+    } @else {
+      <div class="card p-0 overflow-hidden">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Produit</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Site</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantité</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Unité</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Valeur</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            @for (l of levels(); track l.id) {
+              <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ l.product?.name }}</td>
+                <td class="px-6 py-4 text-sm text-gray-500">
+                  {{ l.site?.name }}
+                  @if (l.site?.type) {
+                    <span class="ml-1 text-xs text-gray-400">({{ siteTypeLabel(l.site.type) }})</span>
+                  }
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-900 font-medium">{{ l.quantity }}</td>
+                <td class="px-6 py-4 text-sm text-gray-500">{{ l.product?.unit?.abbreviation || '—' }}</td>
+                <td class="px-6 py-4 text-sm text-gray-900">{{ (l.quantity * (l.product?.cost_price ?? 0)) | number:'1.0-0' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  }
+
+  @if (!loading() && tab() === 'mouvements') {
+    @if (movements().length === 0) {
+      <div class="card text-center py-16">
+        <p class="text-gray-400 text-sm">Aucun mouvement enregistré.</p>
+      </div>
+    } @else {
+      <div class="card p-0 overflow-hidden">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Produit</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Site</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Qté</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Réf.</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            @for (m of movements(); track m.id) {
+              <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4 text-sm text-gray-500">{{ m.created_at | date:'dd/MM/yyyy HH:mm' }}</td>
+                <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ typeLabel(m.type) }}</td>
+                <td class="px-6 py-4 text-sm text-gray-900">{{ m.product?.name }}</td>
+                <td class="px-6 py-4 text-sm text-gray-500">{{ siteDisplay(m) }}</td>
+                <td class="px-6 py-4 text-sm text-gray-900">{{ m.quantity }}</td>
+                <td class="px-6 py-4 text-sm text-gray-500">{{ m.reference || m.note || '—' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  }
+</div>
+
+@if (showModal()) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
+      <h2 class="text-lg font-semibold text-gray-900 mb-5">
+        @switch (action()) {
+          @case ('entree') { Entrée de stock }
+          @case ('sortie') { Sortie de stock }
+          @case ('transfert') { Transfert entre sites }
+          @case ('ajustement') { Ajustement de stock }
+        }
+      </h2>
+
+      @if (errors().length > 0) {
+        <div class="mb-4 bg-red-50 border border-red-200 rounded-md p-3">
+          @for (e of errors(); track e) { <p class="text-sm text-red-600">{{ e }}</p> }
+        </div>
+      }
+
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Produit *</label>
+          <select class="input" [(ngModel)]="form.product_id">
+            <option value="">— Choisir un produit —</option>
+            @for (p of products(); track p.id) {
+              <option [value]="p.id">{{ p.name }}</option>
+            }
+          </select>
+        </div>
+
+        @if (action() === 'transfert') {
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Site source *</label>
+            <select class="input" [(ngModel)]="form.from_site_id">
+              <option value="">— Site source —</option>
+              @for (s of sites(); track s.id) {
+                <option [value]="s.id">{{ s.name }} ({{ siteTypeLabel(s.type) }})</option>
+              }
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Site destination *</label>
+            <select class="input" [(ngModel)]="form.to_site_id">
+              <option value="">— Site destination —</option>
+              @for (s of sites(); track s.id) {
+                <option [value]="s.id">{{ s.name }} ({{ siteTypeLabel(s.type) }})</option>
+              }
+            </select>
+          </div>
+        } @else {
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Site *</label>
+            <select class="input" [(ngModel)]="form.site_id">
+              <option value="">— Choisir un site —</option>
+              @for (s of sites(); track s.id) {
+                <option [value]="s.id">{{ s.name }} ({{ siteTypeLabel(s.type) }})</option>
+              }
+            </select>
+          </div>
+        }
+
+        @if (action() === 'ajustement') {
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Nouvelle quantité *</label>
+            <input class="input" type="number" min="0" [(ngModel)]="form.new_quantity" placeholder="0" />
+          </div>
+        } @else {
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Quantité *</label>
+            <input class="input" type="number" min="1" [(ngModel)]="form.quantity" placeholder="0" />
+          </div>
+        }
+
+        @if (action() === 'entree') {
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Référence (auto)</label>
+            <div class="input bg-gray-50 text-gray-400 select-none">{{ form.reference }}</div>
+          </div>
+        }
+
+        @if (action() === 'sortie' || action() === 'ajustement') {
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Motif</label>
+            <input class="input" [(ngModel)]="form.reason" placeholder="Motif optionnel" />
+          </div>
+        }
+      </div>
+
+      <div class="mt-6 flex justify-end gap-3">
+        <button class="btn-secondary" (click)="showModal.set(false)">Annuler</button>
+        <button class="btn-primary" (click)="save()" [disabled]="saving()">
+          {{ saving() ? 'Enregistrement...' : 'Valider' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
