@@ -3,11 +3,11 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 
 const ADMIN_NAV = [
-  { label: 'Dashboard',      path: '/admin/dashboard',      icon: '⊟' },
-  { label: 'Organisations',  path: '/admin/organisations',  icon: '⊞' },
-  { label: 'Agents',         path: '/admin/agents',         icon: '👥' },
-  { label: 'Utilisateurs',   path: '/admin/utilisateurs',   icon: '👤' },
-  { label: 'Permissions',    path: '/admin/permissions',    icon: '🔐' },
+  { label: 'Dashboard',      path: '/admin/dashboard',      icon: 'dashboard' },
+  { label: 'Organisations',  path: '/admin/organisations',  icon: 'organisations' },
+  { label: 'Agents',         path: '/admin/agents',         icon: 'agents' },
+  { label: 'Utilisateurs',   path: '/admin/utilisateurs',   icon: 'utilisateurs' },
+  { label: 'Permissions',    path: '/admin/permissions',    icon: 'permissions' },
 ];
 
 @Component({

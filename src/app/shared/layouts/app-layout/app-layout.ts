@@ -3,21 +3,21 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 
 const ALL_NAV: { label: string; path: string; icon: string; roles: string[] }[] = [
-  { label: 'Dashboard',    path: '/app/dashboard',    icon: '⊟', roles: ['tenant_admin','manager','magasinier','caissier','auditeur'] },
-  { label: 'Ventes',             path: '/app/ventes',            icon: '🧾', roles: ['caissier'] },
-  { label: 'Historique ventes', path: '/app/historique-ventes', icon: '🧾', roles: ['tenant_admin','manager'] },
-  { label: 'Mes ventes',        path: '/app/mes-ventes',        icon: '📋', roles: ['caissier'] },
-  { label: 'Sites',        path: '/app/sites',        icon: '⊞', roles: ['tenant_admin','manager'] },
-  { label: 'Utilisateurs', path: '/app/utilisateurs', icon: '⊙', roles: ['tenant_admin','manager'] },
-  { label: 'Produits',     path: '/app/produits',     icon: '▦', roles: ['tenant_admin','manager','magasinier','caissier','auditeur'] },
-  { label: 'Catégories',   path: '/app/categories',   icon: '≡', roles: ['tenant_admin','manager'] },
-  { label: 'Unités',       path: '/app/unites',       icon: '◻', roles: ['tenant_admin','manager'] },
-  { label: 'Stock',        path: '/app/stock',        icon: '↕', roles: ['tenant_admin','manager','magasinier','caissier','auditeur'] },
-  { label: 'Fournisseurs', path: '/app/fournisseurs', icon: '◎', roles: ['tenant_admin','manager','auditeur'] },
-  { label: 'Commandes',    path: '/app/commandes',    icon: '▤', roles: ['tenant_admin','manager','magasinier','auditeur'] },
-  { label: 'Alertes',      path: '/app/alertes',      icon: '◬', roles: ['tenant_admin','manager','auditeur'] },
-  { label: 'Rapports',     path: '/app/rapports',     icon: '≋', roles: ['tenant_admin','manager','auditeur'] },
-  { label: 'Entreprise',   path: '/app/entreprise',   icon: '◈', roles: ['tenant_admin'] },
+  { label: 'Dashboard',          path: '/app/dashboard',          icon: 'dashboard',    roles: ['tenant_admin','manager','magasinier','caissier','auditeur'] },
+  { label: 'Ventes',             path: '/app/ventes',             icon: 'ventes',       roles: ['caissier'] },
+  { label: 'Historique ventes',  path: '/app/historique-ventes',  icon: 'historique',   roles: ['tenant_admin','manager'] },
+  { label: 'Mes ventes',         path: '/app/mes-ventes',         icon: 'mes-ventes',   roles: ['caissier'] },
+  { label: 'Sites',              path: '/app/sites',              icon: 'sites',        roles: ['tenant_admin','manager'] },
+  { label: 'Utilisateurs',       path: '/app/utilisateurs',       icon: 'utilisateurs', roles: ['tenant_admin','manager'] },
+  { label: 'Produits',           path: '/app/produits',           icon: 'produits',     roles: ['tenant_admin','manager','magasinier','caissier','auditeur'] },
+  { label: 'Catégories',         path: '/app/categories',         icon: 'categories',   roles: ['tenant_admin','manager'] },
+  { label: 'Unités',             path: '/app/unites',             icon: 'unites',       roles: ['tenant_admin','manager'] },
+  { label: 'Stock',              path: '/app/stock',              icon: 'stock',        roles: ['tenant_admin','manager','magasinier','caissier','auditeur'] },
+  { label: 'Fournisseurs',       path: '/app/fournisseurs',       icon: 'fournisseurs', roles: ['tenant_admin','manager','auditeur'] },
+  { label: 'Commandes',          path: '/app/commandes',          icon: 'commandes',    roles: ['tenant_admin','manager','magasinier','auditeur'] },
+  { label: 'Alertes',            path: '/app/alertes',            icon: 'alertes',      roles: ['tenant_admin','manager','auditeur'] },
+  { label: 'Rapports',           path: '/app/rapports',           icon: 'rapports',     roles: ['tenant_admin','manager','auditeur'] },
+  { label: 'Entreprise',         path: '/app/entreprise',         icon: 'entreprise',   roles: ['tenant_admin'] },
 ];
 
 @Component({
