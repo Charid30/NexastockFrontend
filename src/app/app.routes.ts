@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 import { guestGuard } from './core/guards/guest.guard';
+import { superAdminGuard } from './core/guards/super-admin.guard';
 
 export const routes: Routes = [
   {
@@ -44,6 +45,16 @@ export const routes: Routes = [
       { path: 'mes-ventes',        loadComponent: () => import('./features/app/mes-ventes/mes-ventes').then(m => m.MesVentesComponent) },
       { path: 'historique-ventes', loadComponent: () => import('./features/app/historique-ventes/historique-ventes').then(m => m.HistoriqueVentesComponent) },
       { path: 'entreprise',   loadComponent: () => import('./features/app/company/company').then(m => m.CompanyComponent) },
+    ],
+  },
+  {
+    path: 'admin',
+    canActivate: [superAdminGuard],
+    loadComponent: () => import('./shared/layouts/admin-layout/admin-layout').then(m => m.AdminLayout),
+    children: [
+      { path: '',               redirectTo: 'dashboard', pathMatch: 'full' },
+      { path: 'dashboard',      loadComponent: () => import('./features/admin/dashboard/admin-dashboard').then(m => m.AdminDashboardComponent) },
+      { path: 'organisations',  loadComponent: () => import('./features/admin/organisations/admin-organisations').then(m => m.AdminOrganisationsComponent) },
     ],
   },
   { path: '**', redirectTo: '' },

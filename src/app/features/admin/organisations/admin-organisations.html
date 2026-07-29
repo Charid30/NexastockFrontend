@@ -1,0 +1,199 @@
+<div>
+  <div class="mb-6 flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">Organisations</h1>
+      <p class="mt-1 text-sm text-gray-500">Toutes les entreprises inscrites sur la plateforme</p>
+    </div>
+    @if (total() > 0) {
+      <span class="rounded-full bg-gray-100 px-3 py-1 text-sm font-medium text-gray-600">
+        {{ total() }} organisation{{ total() > 1 ? 's' : '' }}
+      </span>
+    }
+  </div>
+
+  <!-- Recherche -->
+  <div class="mb-4">
+    <input class="input max-w-xs" [(ngModel)]="search" (input)="onSearch()"
+      placeholder="Rechercher par nom, email, téléphone…" />
+  </div>
+
+  @if (loading()) {
+    <div class="card animate-pulse h-48"></div>
+  } @else if (tenants().length === 0) {
+    <div class="card flex flex-col items-center justify-center py-16 text-center">
+      <p class="text-sm text-gray-400">Aucune organisation trouvée.</p>
+    </div>
+  } @else {
+    <div class="card p-0 overflow-hidden">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Organisation</th>
+            <th class="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
+            <th class="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Modules actifs</th>
+            <th class="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+            <th class="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Inscrit le</th>
+            <th class="px-5 py-3"></th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          @for (t of tenants(); track t.id) {
+            <tr class="hover:bg-gray-50">
+              <td class="px-5 py-4">
+                <p class="text-sm font-semibold text-gray-900">{{ t.name }}</p>
+                <p class="text-xs text-gray-400 mt-0.5">{{ t.email || '—' }}</p>
+              </td>
+              <td class="px-5 py-4 text-sm text-gray-500">{{ t.phone || '—' }}</td>
+              <td class="px-5 py-4 text-xs text-gray-500 max-w-48">{{ activeModules(t) }}</td>
+              <td class="px-5 py-4">
+                @if (t.is_active) {
+                  <span class="inline-flex items-center gap-1 rounded-full bg-green-50 px-2 py-0.5 text-xs font-medium text-green-700">
+                    <span class="h-1.5 w-1.5 rounded-full bg-green-500"></span> Actif
+                  </span>
+                } @else {
+                  <span class="inline-flex items-center gap-1 rounded-full bg-red-50 px-2 py-0.5 text-xs font-medium text-red-600">
+                    <span class="h-1.5 w-1.5 rounded-full bg-red-400"></span> Inactif
+                  </span>
+                }
+              </td>
+              <td class="px-5 py-4 text-sm text-gray-400">{{ t.created_at | date:'dd/MM/yyyy' }}</td>
+              <td class="px-5 py-4 text-right">
+                <button class="p-1.5 text-blue-400 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
+                  title="Voir le détail" (click)="openDetail(t.id)">
+                  <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                  </svg>
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
+
+<!-- ─── Modal détail organisation ──────────────────────────────────────── -->
+@if (detail()) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+
+      <!-- Header -->
+      <div class="flex items-start justify-between px-6 py-5 border-b border-gray-100">
+        <div>
+          <h2 class="text-lg font-bold text-gray-900">{{ detail().name }}</h2>
+          <p class="text-xs text-gray-400 mt-0.5">Inscrit le {{ detail().created_at | date:'dd/MM/yyyy' }}</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <!-- Toggle actif/inactif -->
+          <button
+            class="rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors"
+            [class]="detail().is_active
+              ? 'bg-red-50 text-red-600 hover:bg-red-100'
+              : 'bg-green-50 text-green-700 hover:bg-green-100'"
+            [disabled]="saving()"
+            (click)="toggleActive()">
+            {{ detail().is_active ? 'Désactiver' : 'Activer' }}
+          </button>
+          <button class="p-1 text-gray-400 hover:text-gray-700 rounded" (click)="closeDetail()">
+            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="px-6 py-5 space-y-6">
+
+        <!-- Infos générales -->
+        <div class="grid grid-cols-2 gap-4 text-sm">
+          <div>
+            <p class="text-gray-400 text-xs mb-0.5">Email</p>
+            <p class="font-medium text-gray-900">{{ detail().email || '—' }}</p>
+          </div>
+          <div>
+            <p class="text-gray-400 text-xs mb-0.5">Téléphone</p>
+            <p class="font-medium text-gray-900">{{ detail().phone || '—' }}</p>
+          </div>
+          <div>
+            <p class="text-gray-400 text-xs mb-0.5">Adresse</p>
+            <p class="font-medium text-gray-900">{{ detail().address || '—' }}</p>
+          </div>
+          <div>
+            <p class="text-gray-400 text-xs mb-0.5">Statut</p>
+            @if (detail().is_active) {
+              <span class="inline-flex items-center gap-1 rounded-full bg-green-50 px-2 py-0.5 text-xs font-medium text-green-700">
+                <span class="h-1.5 w-1.5 rounded-full bg-green-500"></span> Actif
+              </span>
+            } @else {
+              <span class="inline-flex items-center gap-1 rounded-full bg-red-50 px-2 py-0.5 text-xs font-medium text-red-600">
+                <span class="h-1.5 w-1.5 rounded-full bg-red-400"></span> Inactif
+              </span>
+            }
+          </div>
+        </div>
+
+        <!-- Modules -->
+        <div>
+          <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">Modules</h3>
+          <div class="space-y-2">
+            @for (mod of detail().modules; track mod.module_code) {
+              <div class="flex items-center justify-between rounded-lg border border-gray-100 px-4 py-2.5">
+                <span class="text-sm font-medium text-gray-800">{{ moduleLabel(mod.module_code) }}</span>
+                <button
+                  class="relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200"
+                  [class]="mod.is_active ? 'bg-gray-900' : 'bg-gray-200'"
+                  (click)="toggleModule(mod)">
+                  <span
+                    class="pointer-events-none inline-block h-4 w-4 rounded-full bg-white shadow transform transition-transform duration-200"
+                    [class]="mod.is_active ? 'translate-x-4' : 'translate-x-0'">
+                  </span>
+                </button>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Sites -->
+        @if (detail().sites?.length > 0) {
+          <div>
+            <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">
+              Sites ({{ detail().sites.length }})
+            </h3>
+            <div class="space-y-1.5">
+              @for (site of detail().sites; track site.id) {
+                <div class="flex items-center justify-between rounded-lg bg-gray-50 px-4 py-2 text-sm">
+                  <span class="font-medium text-gray-800">{{ site.name }}</span>
+                  <span class="text-xs text-gray-400 capitalize">{{ site.type }}</span>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- Utilisateurs -->
+        @if (detail().users?.length > 0) {
+          <div>
+            <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">
+              Utilisateurs ({{ detail().users.length }})
+            </h3>
+            <div class="space-y-1.5">
+              @for (u of detail().users; track u.id) {
+                <div class="flex items-center justify-between rounded-lg bg-gray-50 px-4 py-2 text-sm">
+                  <span class="font-medium text-gray-800">{{ u.first_name }} {{ u.last_name }}</span>
+                  <span class="text-xs text-gray-400">{{ u.role }}</span>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+      </div>
+
+      <div class="px-6 pb-5 flex justify-end">
+        <button class="btn-secondary" (click)="closeDetail()">Fermer</button>
+      </div>
+    </div>
+  </div>
+}

@@ -31,7 +31,10 @@ export class LoginComponent {
 
     const { phone, password } = this.form.getRawValue();
     this.auth.login(phone, password).subscribe({
-      next: () => this.router.navigate(['/app/dashboard']),
+      next: () => {
+        const dest = this.auth.isSuperAdmin() ? '/admin/dashboard' : '/app/dashboard';
+        this.router.navigate([dest]);
+      },
       error: (err) => {
         const body = err.error ?? {};
         this.error.set(body.message ?? 'Erreur de connexion');

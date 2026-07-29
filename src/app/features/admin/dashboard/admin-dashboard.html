@@ -1,0 +1,63 @@
+<div>
+  <div class="mb-6">
+    <h1 class="text-2xl font-bold text-gray-900">Dashboard</h1>
+    <p class="mt-1 text-sm text-gray-500">Vue d'ensemble de la plateforme NexaStock</p>
+  </div>
+
+  @if (loading()) {
+    <div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
+      @for (i of [1,2,3,4]; track i) {
+        <div class="card h-28 animate-pulse"></div>
+      }
+    </div>
+  }
+
+  @if (!loading() && stats()) {
+    <div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
+
+      <div class="card flex flex-col justify-between">
+        <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">Organisations</p>
+        <div>
+          <p class="text-3xl font-extrabold text-gray-900">{{ stats().total_tenants }}</p>
+          <p class="mt-1 text-xs text-gray-400">au total</p>
+        </div>
+      </div>
+
+      <div class="card flex flex-col justify-between">
+        <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">Actives</p>
+        <div>
+          <p class="text-3xl font-extrabold text-green-600">{{ stats().active_tenants }}</p>
+          <p class="mt-1 text-xs text-gray-400">
+            {{ stats().total_tenants - stats().active_tenants }} inactives
+          </p>
+        </div>
+      </div>
+
+      <div class="card flex flex-col justify-between">
+        <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">Utilisateurs</p>
+        <div>
+          <p class="text-3xl font-extrabold text-gray-900">{{ stats().total_users }}</p>
+          <p class="mt-1 text-xs text-gray-400">toutes orgs confondues</p>
+        </div>
+      </div>
+
+      <div class="card flex flex-col justify-between">
+        <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">Sites</p>
+        <div>
+          <p class="text-3xl font-extrabold text-gray-900">{{ stats().total_sites }}</p>
+          <p class="mt-1 text-xs text-gray-400">boutiques & entrepôts</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Raccourci -->
+    <div class="mt-8">
+      <a routerLink="/admin/organisations"
+        class="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors">
+        <span>⊞</span>
+        Gérer les organisations
+      </a>
+    </div>
+  }
+</div>
