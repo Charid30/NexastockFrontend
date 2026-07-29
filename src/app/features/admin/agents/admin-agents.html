@@ -1,0 +1,163 @@
+<div>
+  <div class="mb-6 flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">Équipe NexaLab</h1>
+      <p class="mt-1 text-sm text-gray-500">Collaborateurs internes de la plateforme</p>
+    </div>
+    <button class="btn-primary" (click)="openCreate()">+ Ajouter un agent</button>
+  </div>
+
+  <!-- Filtres -->
+  <div class="mb-4 flex gap-3">
+    <input class="input max-w-xs" [(ngModel)]="search" (input)="load()" placeholder="Rechercher…" />
+    <select class="input max-w-xs" [(ngModel)]="roleFilter" (change)="load()">
+      <option value="">Tous les rôles</option>
+      @for (r of roles; track r.value) {
+        <option [value]="r.value">{{ r.label }}</option>
+      }
+    </select>
+  </div>
+
+  @if (loading()) {
+    <div class="card animate-pulse h-48"></div>
+  } @else if (agents().length === 0) {
+    <div class="card flex flex-col items-center justify-center py-16 text-center">
+      <p class="text-sm text-gray-400">Aucun agent trouvé.</p>
+    </div>
+  } @else {
+    <div class="card p-0 overflow-hidden">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Agent</th>
+            <th class="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Téléphone</th>
+            <th class="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rôle</th>
+            <th class="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+            <th class="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ajouté le</th>
+            <th class="px-5 py-3"></th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          @for (a of agents(); track a.id) {
+            <tr class="hover:bg-gray-50">
+              <td class="px-5 py-4">
+                <p class="text-sm font-semibold text-gray-900">{{ a.first_name }} {{ a.last_name }}</p>
+                <p class="text-xs text-gray-400 mt-0.5">{{ a.email || '—' }}</p>
+              </td>
+              <td class="px-5 py-4 text-sm text-gray-500">{{ a.phone }}</td>
+              <td class="px-5 py-4">
+                <span class="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-700">
+                  {{ roleLabel(a.role) }}
+                </span>
+              </td>
+              <td class="px-5 py-4">
+                @if (a.is_active) {
+                  <span class="inline-flex items-center gap-1 rounded-full bg-green-50 px-2 py-0.5 text-xs font-medium text-green-700">
+                    <span class="h-1.5 w-1.5 rounded-full bg-green-500"></span> Actif
+                  </span>
+                } @else {
+                  <span class="inline-flex items-center gap-1 rounded-full bg-red-50 px-2 py-0.5 text-xs font-medium text-red-600">
+                    <span class="h-1.5 w-1.5 rounded-full bg-red-400"></span> Inactif
+                  </span>
+                }
+              </td>
+              <td class="px-5 py-4 text-sm text-gray-400">{{ a.created_at | date:'dd/MM/yyyy' }}</td>
+              <td class="px-5 py-4 text-right">
+                <div class="flex items-center justify-end gap-1">
+                  <button class="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
+                    title="Modifier" (click)="openEdit(a)">
+                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                    </svg>
+                  </button>
+                  <button class="p-1.5 text-gray-400 rounded-md transition-colors"
+                    [class]="a.is_active ? 'hover:text-orange-600 hover:bg-orange-50' : 'hover:text-green-600 hover:bg-green-50'"
+                    [title]="a.is_active ? 'Désactiver' : 'Activer'"
+                    (click)="toggle(a)">
+                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
+                    </svg>
+                  </button>
+                  <button class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
+                    title="Supprimer" (click)="delete(a)">
+                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                    </svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
+
+<!-- ─── Modal Créer / Modifier ─────────────────────────────────────────────── -->
+@if (showModal()) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
+      <div class="flex items-center justify-between px-6 py-5 border-b border-gray-100">
+        <h2 class="text-lg font-bold text-gray-900">
+          {{ editTarget() ? 'Modifier l\'agent' : 'Nouvel agent' }}
+        </h2>
+        <button class="p-1 text-gray-400 hover:text-gray-700 rounded" (click)="closeModal()">
+          <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <form #f="ngForm" (ngSubmit)="submit(f)" class="px-6 py-5 space-y-4">
+        @if (error()) {
+          <div class="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">{{ error() }}</div>
+        }
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="label">Prénom *</label>
+            <input class="input" name="first_name" [(ngModel)]="form.first_name" required />
+          </div>
+          <div>
+            <label class="label">Nom *</label>
+            <input class="input" name="last_name" [(ngModel)]="form.last_name" required />
+          </div>
+        </div>
+
+        <div>
+          <label class="label">Téléphone *</label>
+          <input class="input" name="phone" [(ngModel)]="form.phone" required />
+        </div>
+
+        <div>
+          <label class="label">Email</label>
+          <input class="input" type="email" name="email" [(ngModel)]="form.email" />
+        </div>
+
+        <div>
+          <label class="label">Rôle *</label>
+          <select class="input" name="role" [(ngModel)]="form.role" required>
+            <option value="">Sélectionner un rôle</option>
+            @for (r of roles; track r.value) {
+              <option [value]="r.value">{{ r.label }}</option>
+            }
+          </select>
+        </div>
+
+        <div>
+          <label class="label">{{ editTarget() ? 'Nouveau mot de passe (laisser vide pour ne pas changer)' : 'Mot de passe *' }}</label>
+          <input class="input" type="password" name="password" [(ngModel)]="form.password"
+            [required]="!editTarget()" />
+        </div>
+
+        <div class="flex justify-end gap-3 pt-2">
+          <button type="button" class="btn-secondary" (click)="closeModal()">Annuler</button>
+          <button type="submit" class="btn-primary" [disabled]="saving()">
+            {{ saving() ? 'Enregistrement…' : (editTarget() ? 'Mettre à jour' : 'Créer l\'agent') }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

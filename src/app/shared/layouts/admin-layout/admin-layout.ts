@@ -5,6 +5,9 @@ import { AuthService } from '../../../core/services/auth.service';
 const ADMIN_NAV = [
   { label: 'Dashboard',      path: '/admin/dashboard',      icon: '⊟' },
   { label: 'Organisations',  path: '/admin/organisations',  icon: '⊞' },
+  { label: 'Agents',         path: '/admin/agents',         icon: '👥' },
+  { label: 'Utilisateurs',   path: '/admin/utilisateurs',   icon: '👤' },
+  { label: 'Permissions',    path: '/admin/permissions',    icon: '🔐' },
 ];
 
 @Component({

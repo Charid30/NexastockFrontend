@@ -1,0 +1,93 @@
+<div>
+  <div class="mb-6">
+    <h1 class="text-2xl font-bold text-gray-900">Utilisateurs</h1>
+    <p class="mt-1 text-sm text-gray-500">Tous les utilisateurs créés par les organisations</p>
+  </div>
+
+  <!-- Filtres -->
+  <div class="mb-4 flex flex-wrap gap-3">
+    <input class="input max-w-xs" [(ngModel)]="search" (input)="load()" placeholder="Rechercher par nom, téléphone…" />
+    <select class="input w-44" [(ngModel)]="tenantFilter" (change)="load()">
+      <option value="">Toutes les orgs</option>
+      @for (t of tenants(); track t.id) {
+        <option [value]="t.id">{{ t.name }}</option>
+      }
+    </select>
+    <select class="input w-44" [(ngModel)]="roleFilter" (change)="load()">
+      <option value="">Tous les rôles</option>
+      @for (r of roles; track r.value) {
+        <option [value]="r.value">{{ r.label }}</option>
+      }
+    </select>
+    <select class="input w-36" [(ngModel)]="activeFilter" (change)="load()">
+      <option value="">Tous statuts</option>
+      <option value="1">Actifs</option>
+      <option value="0">Inactifs</option>
+    </select>
+  </div>
+
+  @if (total() > 0) {
+    <p class="mb-3 text-sm text-gray-500">{{ total() }} utilisateur{{ total() > 1 ? 's' : '' }}</p>
+  }
+
+  @if (loading()) {
+    <div class="card animate-pulse h-48"></div>
+  } @else if (users().length === 0) {
+    <div class="card flex flex-col items-center justify-center py-16 text-center">
+      <p class="text-sm text-gray-400">Aucun utilisateur trouvé.</p>
+    </div>
+  } @else {
+    <div class="card p-0 overflow-hidden">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Utilisateur</th>
+            <th class="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Organisation</th>
+            <th class="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rôle</th>
+            <th class="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+            <th class="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Dernière connexion</th>
+            <th class="px-5 py-3"></th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          @for (u of users(); track u.id) {
+            <tr class="hover:bg-gray-50">
+              <td class="px-5 py-4">
+                <p class="text-sm font-semibold text-gray-900">{{ u.first_name }} {{ u.last_name }}</p>
+                <p class="text-xs text-gray-400 mt-0.5">{{ u.phone }}</p>
+              </td>
+              <td class="px-5 py-4 text-sm text-gray-600">{{ u.tenant?.name || '—' }}</td>
+              <td class="px-5 py-4">
+                <span class="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-700">
+                  {{ roleLabel(u.role) }}
+                </span>
+              </td>
+              <td class="px-5 py-4">
+                @if (u.is_active) {
+                  <span class="inline-flex items-center gap-1 rounded-full bg-green-50 px-2 py-0.5 text-xs font-medium text-green-700">
+                    <span class="h-1.5 w-1.5 rounded-full bg-green-500"></span> Actif
+                  </span>
+                } @else {
+                  <span class="inline-flex items-center gap-1 rounded-full bg-red-50 px-2 py-0.5 text-xs font-medium text-red-600">
+                    <span class="h-1.5 w-1.5 rounded-full bg-red-400"></span> Inactif
+                  </span>
+                }
+              </td>
+              <td class="px-5 py-4 text-sm text-gray-400">
+                {{ u.last_login_at ? (u.last_login_at | date:'dd/MM/yyyy HH:mm') : '—' }}
+              </td>
+              <td class="px-5 py-4 text-right">
+                <button
+                  class="rounded-lg px-3 py-1 text-xs font-semibold transition-colors"
+                  [class]="u.is_active ? 'bg-red-50 text-red-600 hover:bg-red-100' : 'bg-green-50 text-green-700 hover:bg-green-100'"
+                  (click)="toggle(u)">
+                  {{ u.is_active ? 'Désactiver' : 'Activer' }}
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

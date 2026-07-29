@@ -1,0 +1,175 @@
+<div class="h-full">
+  <div class="mb-6 flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">Permissions</h1>
+      <p class="mt-1 text-sm text-gray-500">Gérer les rôles et leurs droits d'accès</p>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="card animate-pulse h-64"></div>
+  } @else {
+    <div class="flex gap-6 h-[calc(100vh-200px)]">
+
+      <!-- ─── Panneau gauche : liste des rôles ─────────────────────────────── -->
+      <div class="w-64 shrink-0 flex flex-col gap-3">
+
+        <!-- Tabs NexaLab / Boutiques -->
+        <div class="flex rounded-lg bg-gray-100 p-1">
+          <button class="flex-1 rounded-md py-1.5 text-xs font-medium transition-colors"
+            [class]="activeTab() === 'tenant' ? 'bg-white shadow text-gray-900' : 'text-gray-500 hover:text-gray-700'"
+            (click)="setTab('tenant')">Boutiques</button>
+          <button class="flex-1 rounded-md py-1.5 text-xs font-medium transition-colors"
+            [class]="activeTab() === 'nexalab' ? 'bg-white shadow text-gray-900' : 'text-gray-500 hover:text-gray-700'"
+            (click)="setTab('nexalab')">NexaLab</button>
+        </div>
+
+        <button class="w-full rounded-lg border-2 border-dashed border-gray-200 py-2 text-xs font-medium text-gray-400 hover:border-gray-300 hover:text-gray-600 transition-colors"
+          (click)="openCreate()">+ Nouveau rôle</button>
+
+        <div class="flex-1 overflow-y-auto space-y-1">
+          @for (role of filteredRoles(); track role.id) {
+            <div
+              class="group flex items-center justify-between rounded-lg px-3 py-2.5 cursor-pointer transition-colors"
+              [class]="selectedRole()?.id === role.id
+                ? 'bg-gray-900 text-white'
+                : 'hover:bg-gray-100 text-gray-700'"
+              (click)="selectRole(role)">
+              <div class="min-w-0">
+                <p class="text-sm font-medium truncate">{{ role.label }}</p>
+                @if (role.is_system) {
+                  <p class="text-xs mt-0.5" [class]="selectedRole()?.id === role.id ? 'text-gray-400' : 'text-gray-400'">Système</p>
+                }
+              </div>
+              @if (!role.is_system) {
+                <button
+                  class="ml-2 p-1 rounded opacity-0 group-hover:opacity-100 transition-opacity"
+                  [class]="selectedRole()?.id === role.id ? 'text-gray-400 hover:text-red-400' : 'text-gray-400 hover:text-red-500'"
+                  (click)="$event.stopPropagation(); deleteRole(role)"
+                  title="Supprimer">
+                  <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                  </svg>
+                </button>
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- ─── Panneau droite : matrice permissions ──────────────────────────── -->
+      <div class="flex-1 min-w-0">
+        @if (!selectedRole()) {
+          <div class="card flex h-full items-center justify-center text-center">
+            <div>
+              <p class="text-gray-400 text-sm">Sélectionnez un rôle pour gérer ses permissions</p>
+            </div>
+          </div>
+        } @else {
+          <div class="card p-0 flex flex-col h-full overflow-hidden">
+            <!-- Header -->
+            <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+              <div>
+                <h2 class="text-base font-bold text-gray-900">{{ selectedRole().label }}</h2>
+                <p class="text-xs text-gray-400 mt-0.5">{{ selectedRole().description || 'Aucune description' }}</p>
+              </div>
+              <div class="flex items-center gap-3">
+                @if (saveOk()) {
+                  <span class="text-xs text-green-600 font-medium">✓ Sauvegardé</span>
+                }
+                <button class="btn-primary text-sm py-1.5 px-4" (click)="save()" [disabled]="saving()">
+                  {{ saving() ? 'Sauvegarde…' : 'Sauvegarder' }}
+                </button>
+              </div>
+            </div>
+
+            <!-- Matrice -->
+            <div class="flex-1 overflow-auto">
+              <table class="min-w-full">
+                <thead class="sticky top-0 bg-white border-b border-gray-200">
+                  <tr>
+                    <th class="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-48">Module</th>
+                    @for (action of actions; track action) {
+                      <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        {{ actionLabels[action] }}
+                      </th>
+                    }
+                    <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Tout</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                  @for (module of modules; track module) {
+                    <tr class="hover:bg-gray-50">
+                      <td class="px-5 py-3 text-sm font-medium text-gray-800">{{ moduleLabels[module] }}</td>
+                      @for (action of actions; track action) {
+                        <td class="px-4 py-3 text-center">
+                          <input type="checkbox"
+                            class="h-4 w-4 rounded border-gray-300 text-gray-900 focus:ring-gray-900 cursor-pointer"
+                            [checked]="isChecked(module, action)"
+                            (change)="toggle(module, action)" />
+                        </td>
+                      }
+                      <td class="px-4 py-3 text-center">
+                        <input type="checkbox"
+                          class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+                          [checked]="allModuleChecked(module)"
+                          (change)="toggleAll(module)" />
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>
+
+<!-- ─── Modal créer un rôle ────────────────────────────────────────────────── -->
+@if (showCreateModal()) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-sm">
+      <div class="flex items-center justify-between px-6 py-5 border-b border-gray-100">
+        <h2 class="text-lg font-bold text-gray-900">Nouveau rôle</h2>
+        <button class="p-1 text-gray-400 hover:text-gray-700 rounded" (click)="showCreateModal.set(false)">
+          <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+      <form #cf="ngForm" (ngSubmit)="submitCreate(cf)" class="px-6 py-5 space-y-4">
+        @if (createError()) {
+          <div class="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">{{ createError() }}</div>
+        }
+        <div>
+          <label class="label">Type *</label>
+          <select class="input" name="type" [(ngModel)]="createForm.type" required>
+            <option value="tenant">Boutique</option>
+            <option value="nexalab">NexaLab</option>
+          </select>
+        </div>
+        <div>
+          <label class="label">Identifiant technique * <span class="font-normal text-gray-400">(ex: custom_manager)</span></label>
+          <input class="input" name="name" [(ngModel)]="createForm.name" required
+            pattern="[a-z_]+" title="Minuscules et underscores uniquement" />
+        </div>
+        <div>
+          <label class="label">Libellé *</label>
+          <input class="input" name="label" [(ngModel)]="createForm.label" required />
+        </div>
+        <div>
+          <label class="label">Description</label>
+          <textarea class="input" name="description" [(ngModel)]="createForm.description" rows="2"></textarea>
+        </div>
+        <div class="flex justify-end gap-3 pt-2">
+          <button type="button" class="btn-secondary" (click)="showCreateModal.set(false)">Annuler</button>
+          <button type="submit" class="btn-primary" [disabled]="saving()">
+            {{ saving() ? 'Création…' : 'Créer le rôle' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
