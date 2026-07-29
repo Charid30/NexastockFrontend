@@ -4,8 +4,9 @@ import { AuthService } from '../../../core/services/auth.service';
 
 const ALL_NAV: { label: string; path: string; icon: string; roles: string[] }[] = [
   { label: 'Dashboard',    path: '/app/dashboard',    icon: '⊟', roles: ['tenant_admin','manager','magasinier','caissier','auditeur'] },
-  { label: 'Ventes',       path: '/app/ventes',       icon: '🧾', roles: ['tenant_admin','manager','caissier'] },
-  { label: 'Mes ventes',   path: '/app/mes-ventes',   icon: '📋', roles: ['caissier'] },
+  { label: 'Ventes',             path: '/app/ventes',            icon: '🧾', roles: ['caissier'] },
+  { label: 'Historique ventes', path: '/app/historique-ventes', icon: '🧾', roles: ['tenant_admin','manager'] },
+  { label: 'Mes ventes',        path: '/app/mes-ventes',        icon: '📋', roles: ['caissier'] },
   { label: 'Sites',        path: '/app/sites',        icon: '⊞', roles: ['tenant_admin','manager'] },
   { label: 'Utilisateurs', path: '/app/utilisateurs', icon: '⊙', roles: ['tenant_admin','manager'] },
   { label: 'Produits',     path: '/app/produits',     icon: '▦', roles: ['tenant_admin','manager','magasinier','caissier','auditeur'] },
