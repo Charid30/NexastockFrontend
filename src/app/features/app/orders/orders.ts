@@ -5,6 +5,7 @@ import { OrdersService } from '../../../core/services/orders.service';
 import { SuppliersService } from '../../../core/services/suppliers.service';
 import { ProductsService } from '../../../core/services/products.service';
 import { SitesService } from '../../../core/services/sites.service';
+import { PermissionService } from '../../../core/services/permission.service';
 
 import { ConfirmModalComponent } from '../../../shared/confirm-modal/confirm-modal';
 
@@ -18,6 +19,7 @@ interface OrderLine { product_id: string; quantity_ordered: number; unit_cost: n
 })
 export class OrdersComponent implements OnInit {
   private svc         = inject(OrdersService);
+  readonly perm       = inject(PermissionService);
   private supplierSvc = inject(SuppliersService);
   private prodSvc     = inject(ProductsService);
   private siteSvc     = inject(SitesService);

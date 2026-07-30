@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { StockService } from '../../../core/services/stock.service';
 import { ProductsService } from '../../../core/services/products.service';
 import { SitesService } from '../../../core/services/sites.service';
+import { PermissionService } from '../../../core/services/permission.service';
 
 type TabType = 'niveaux' | 'mouvements';
 type ActionType = 'entree' | 'sortie' | 'transfert' | 'ajustement';
@@ -18,6 +19,7 @@ export class StockComponent implements OnInit {
   private svc      = inject(StockService);
   private prodSvc  = inject(ProductsService);
   private siteSvc  = inject(SitesService);
+  readonly perm    = inject(PermissionService);
 
   tab          = signal<TabType>('niveaux');
   levels       = signal<any[]>([]);

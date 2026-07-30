@@ -4,11 +4,13 @@
       <h1 class="text-2xl font-bold text-gray-900">Gestion du stock</h1>
       <p class="mt-1 text-sm text-gray-500">Niveaux et mouvements de stock</p>
     </div>
-    <div class="flex gap-2">
-      @for (a of actions; track a.key) {
-        <button class="btn-secondary text-sm" (click)="openModal(a.key)">{{ a.label }}</button>
-      }
-    </div>
+    @if (perm.can('stock', 'create')) {
+      <div class="flex gap-2">
+        @for (a of actions; track a.key) {
+          <button class="btn-secondary text-sm" (click)="openModal(a.key)">{{ a.label }}</button>
+        }
+      </div>
+    }
   </div>
 
   <div class="mb-4 flex gap-1 border-b border-gray-200">

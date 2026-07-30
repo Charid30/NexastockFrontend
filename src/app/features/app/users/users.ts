@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UsersService } from '../../../core/services/users.service';
 import { SitesService } from '../../../core/services/sites.service';
+import { PermissionService } from '../../../core/services/permission.service';
 import { ConfirmModalComponent } from '../../../shared/confirm-modal/confirm-modal';
 
 @Component({
@@ -12,7 +13,8 @@ import { ConfirmModalComponent } from '../../../shared/confirm-modal/confirm-mod
   templateUrl: './users.html',
 })
 export class UsersComponent implements OnInit {
-  private svc     = inject(UsersService);
+  private svc      = inject(UsersService);
+  readonly perm    = inject(PermissionService);
   private siteSvc = inject(SitesService);
 
   users     = signal<any[]>([]);

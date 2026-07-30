@@ -55,11 +55,13 @@
         </div>
       </div>
 
-      <div class="mt-6 flex justify-end">
-        <button class="btn-primary" (click)="save()" [disabled]="saving()">
-          {{ saving() ? 'Enregistrement...' : 'Enregistrer les modifications' }}
-        </button>
-      </div>
+      @if (perm.can('entreprise', 'update')) {
+        <div class="mt-6 flex justify-end">
+          <button class="btn-primary" (click)="save()" [disabled]="saving()">
+            {{ saving() ? 'Enregistrement...' : 'Enregistrer les modifications' }}
+          </button>
+        </div>
+      }
     </div>
   }
 </div>

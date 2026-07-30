@@ -1,10 +1,10 @@
-import { Component, inject, signal, computed, OnInit } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ProductsService } from '../../../core/services/products.service';
 import { CategoriesService } from '../../../core/services/categories.service';
 import { UnitsService } from '../../../core/services/units.service';
-import { AuthService } from '../../../core/services/auth.service';
+import { PermissionService } from '../../../core/services/permission.service';
 import { ConfirmModalComponent } from '../../../shared/confirm-modal/confirm-modal';
 
 @Component({
@@ -17,9 +17,7 @@ export class ProductsComponent implements OnInit {
   private svc      = inject(ProductsService);
   private catSvc   = inject(CategoriesService);
   private unitSvc  = inject(UnitsService);
-  private auth     = inject(AuthService);
-
-  readonly isReadOnly = computed(() => this.auth.user()?.role === 'caissier');
+  readonly perm    = inject(PermissionService);
 
   products   = signal<any[]>([]);
   categories = signal<any[]>([]);

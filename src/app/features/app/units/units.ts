@@ -2,6 +2,7 @@ import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UnitsService } from '../../../core/services/units.service';
+import { PermissionService } from '../../../core/services/permission.service';
 import { ConfirmModalComponent } from '../../../shared/confirm-modal/confirm-modal';
 
 @Component({
@@ -11,7 +12,8 @@ import { ConfirmModalComponent } from '../../../shared/confirm-modal/confirm-mod
   templateUrl: './units.html',
 })
 export class UnitsComponent implements OnInit {
-  private svc = inject(UnitsService);
+  private svc  = inject(UnitsService);
+  readonly perm = inject(PermissionService);
 
   units      = signal<any[]>([]);
   loading    = signal(true);

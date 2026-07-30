@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { AlertsService } from '../../../core/services/alerts.service';
 import { ProductsService } from '../../../core/services/products.service';
 import { SitesService } from '../../../core/services/sites.service';
+import { PermissionService } from '../../../core/services/permission.service';
 import { ConfirmModalComponent } from '../../../shared/confirm-modal/confirm-modal';
 
 @Component({
@@ -13,6 +14,7 @@ import { ConfirmModalComponent } from '../../../shared/confirm-modal/confirm-mod
   templateUrl: './alerts.html',
 })
 export class AlertsComponent implements OnInit {
+  readonly perm = inject(PermissionService);
   private svc     = inject(AlertsService);
   private prodSvc = inject(ProductsService);
   private siteSvc = inject(SitesService);

@@ -2,6 +2,7 @@ import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CompanyService } from '../../../core/services/company.service';
+import { PermissionService } from '../../../core/services/permission.service';
 
 @Component({
   selector: 'app-company',
@@ -10,7 +11,8 @@ import { CompanyService } from '../../../core/services/company.service';
   templateUrl: './company.html',
 })
 export class CompanyComponent implements OnInit {
-  private svc = inject(CompanyService);
+  private svc  = inject(CompanyService);
+  readonly perm = inject(PermissionService);
 
   company  = signal<any>(null);
   loading  = signal(true);
