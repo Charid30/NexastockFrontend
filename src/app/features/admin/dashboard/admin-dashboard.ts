@@ -1,12 +1,11 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { TenantsAdminService } from '../../../core/services/tenants-admin.service';
 
 @Component({
   selector:    'app-admin-dashboard',
   standalone:  true,
-  imports:     [DecimalPipe, RouterLink],
+  imports:     [RouterLink],
   templateUrl: './admin-dashboard.html',
 })
 export class AdminDashboardComponent implements OnInit {
