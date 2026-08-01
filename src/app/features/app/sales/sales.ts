@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { DecimalPipe } from '@angular/common';
 import { SalesService } from '../../../core/services/sales.service';
 import { ApiService }   from '../../../core/services/api.service';
-import { SitesService } from '../../../core/services/sites.service';
+import { AuthService }  from '../../../core/services/auth.service';
 
 interface CartItem {
   product_id: string;
@@ -22,7 +22,7 @@ interface CartItem {
 })
 export class SalesComponent implements OnInit {
   private salesService = inject(SalesService);
-  private sitesService = inject(SitesService);
+  private auth         = inject(AuthService);
   private api          = inject(ApiService);
 
   sites          = signal<any[]>([]);
@@ -63,15 +63,12 @@ export class SalesComponent implements OnInit {
   );
 
   ngOnInit() {
-    this.sitesService.getAll().subscribe({
-      next: (res) => {
-        this.sites.set(res.data);
-        if (res.data.length === 1) {
-          this.selectedSiteId.set(res.data[0].id);
-          this.loadStock();
-        }
-      },
-    });
+    const userSites = this.auth.user()?.sites ?? [];
+    this.sites.set(userSites);
+    if (userSites.length === 1) {
+      this.selectedSiteId.set(userSites[0].id);
+      this.loadStock();
+    }
   }
 
   onSiteChange() {
