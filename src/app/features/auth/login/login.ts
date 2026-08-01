@@ -32,8 +32,7 @@ export class LoginComponent {
     const { phone, password } = this.form.getRawValue();
     this.auth.login(phone, password).subscribe({
       next: () => {
-        const dest = this.auth.isSuperAdmin() ? '/admin/dashboard' : '/app/dashboard';
-        this.router.navigate([dest]);
+        this.router.navigate([this.auth.dashboardUrl]);
       },
       error: (err) => {
         const body = err.error ?? {};

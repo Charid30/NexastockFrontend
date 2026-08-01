@@ -6,8 +6,10 @@ export const guestGuard: CanActivateFn = () => {
   const auth   = inject(AuthService);
   const router = inject(Router);
 
+  auth.clearExpiredSession();
+
   if (auth.isLoggedIn()) {
-    router.navigate(['/app/dashboard']);
+    router.navigate([auth.dashboardUrl]);
     return false;
   }
 

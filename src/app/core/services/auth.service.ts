@@ -5,6 +5,8 @@ import { tap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { User, AuthResponse, ApiResponse } from '../models';
 
+const NEXALAB_ROLES = new Set(['super_admin', 'nexalab_support', 'nexalab_commercial', 'nexalab_technique']);
+
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly http   = inject(HttpClient);
@@ -12,10 +14,16 @@ export class AuthService {
 
   private readonly _user = signal<User | null>(this._loadUser());
 
-  readonly user         = this._user.asReadonly();
-  readonly isLoggedIn   = computed(() => !!this._user());
-  readonly isSuperAdmin = computed(() => this._user()?.role === 'super_admin');
+  readonly user          = this._user.asReadonly();
+  readonly isLoggedIn    = computed(() => !!this._user());
+  readonly isSuperAdmin  = computed(() => this._user()?.role === 'super_admin');
+  readonly isNexaLabRole = computed(() => NEXALAB_ROLES.has(this._user()?.role as string));
   readonly isTenantAdmin = computed(() => this._user()?.role === 'tenant_admin');
+
+  get dashboardUrl(): string {
+    const role = this._user()?.role as string | undefined;
+    return role && NEXALAB_ROLES.has(role) ? '/admin' : '/app/dashboard';
+  }
 
   register(data: Record<string, unknown>) {
     return this.http.post<ApiResponse<AuthResponse>>(`${environment.apiUrl}/auth/register`, data).pipe(
@@ -58,6 +66,24 @@ export class AuthService {
     localStorage.setItem('refresh_token', data.refreshToken);
     localStorage.setItem('user', JSON.stringify(data.user));
     this._user.set(data.user);
+  }
+
+  clearExpiredSession(): void {
+    const access  = localStorage.getItem('access_token');
+    const refresh = localStorage.getItem('refresh_token');
+    if (this._isExpired(access) && this._isExpired(refresh)) {
+      this._clearSession();
+    }
+  }
+
+  private _isExpired(token: string | null): boolean {
+    if (!token) return true;
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return typeof payload.exp === 'number' && payload.exp * 1000 < Date.now();
+    } catch {
+      return true;
+    }
   }
 
   private _clearSession() {
