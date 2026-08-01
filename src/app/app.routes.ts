@@ -17,11 +17,10 @@ export const routes: Routes = [
   },
   {
     path: '',
-    canActivate: [guestGuard],
     loadComponent: () => import('./shared/layouts/auth-layout/auth-layout').then(m => m.AuthLayout),
     children: [
-      { path: 'connexion',   loadComponent: () => import('./features/auth/login/login').then(m => m.LoginComponent) },
-      { path: 'inscription', loadComponent: () => import('./features/auth/register/register').then(m => m.RegisterComponent) },
+      { path: 'connexion',   canActivate: [guestGuard], loadComponent: () => import('./features/auth/login/login').then(m => m.LoginComponent) },
+      { path: 'inscription', canActivate: [guestGuard], loadComponent: () => import('./features/auth/register/register').then(m => m.RegisterComponent) },
     ],
   },
   {

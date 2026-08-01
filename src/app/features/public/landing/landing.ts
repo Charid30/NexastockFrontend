@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, inject, OnInit } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-landing',
@@ -7,7 +8,15 @@ import { RouterLink } from '@angular/router';
   imports: [RouterLink],
   templateUrl: './landing.html',
 })
-export class LandingComponent {
+export class LandingComponent implements OnInit {
+  private readonly auth   = inject(AuthService);
+  private readonly router = inject(Router);
+
+  ngOnInit() {
+    if (this.auth.isLoggedIn()) {
+      this.router.navigate([this.auth.dashboardUrl]);
+    }
+  }
   readonly features = [
     { icon: '▦', title: 'Multi-sites', desc: 'Gérez plusieurs boutiques, entrepôts et annexes depuis un seul espace.' },
     { icon: '⊞', title: 'Rôles & accès', desc: 'Attribuez des rôles précis à chaque employé selon son poste.' },
