@@ -31,18 +31,17 @@ export class SalesComponent implements OnInit {
   selectedSiteId = signal('');
   search         = signal('');
   paymentMethod  = signal('especes');
-  note           = signal('');
+  amountReceived = signal<number | null>(null);
   saving         = signal(false);
   success        = signal(false);
   errors         = signal<string[]>([]);
   loading        = signal(false);
   lastSale       = signal<any>(null);
+  lastChange     = signal<number | null>(null);
 
   readonly PAYMENT_METHODS = [
     { value: 'especes',      label: 'Espèces' },
     { value: 'mobile_money', label: 'Mobile Money' },
-    { value: 'carte',        label: 'Carte bancaire' },
-    { value: 'cheque',       label: 'Chèque' },
   ];
 
   readonly filteredStock = computed(() => {
@@ -61,6 +60,12 @@ export class SalesComponent implements OnInit {
   readonly cartCount = computed(() =>
     this.cart().reduce((sum, i) => sum + i.quantity, 0)
   );
+
+  readonly changeDue = computed(() => {
+    const received = this.amountReceived();
+    if (received == null || received <= 0 || this.cart().length === 0) return null;
+    return received - this.total();
+  });
 
   ngOnInit() {
     const userSites = this.auth.user()?.sites ?? [];
@@ -128,12 +133,13 @@ export class SalesComponent implements OnInit {
 
   clearCart() {
     this.cart.set([]);
-    this.note.set('');
+    this.amountReceived.set(null);
     this.errors.set([]);
   }
 
   newSale() {
     this.lastSale.set(null);
+    this.lastChange.set(null);
     this.success.set(false);
     this.errors.set([]);
   }
@@ -236,10 +242,12 @@ export class SalesComponent implements OnInit {
     this.saving.set(true);
     this.errors.set([]);
 
+    const change = this.changeDue();
+
     this.salesService.create({
       site_id:        this.selectedSiteId(),
       payment_method: this.paymentMethod(),
-      note:           this.note(),
+      note:           '',
       items: this.cart().map(i => ({
         product_id: i.product_id,
         quantity:   i.quantity,
@@ -250,8 +258,9 @@ export class SalesComponent implements OnInit {
         this.saving.set(false);
         this.success.set(true);
         this.lastSale.set(res.data);
+        this.lastChange.set(change != null && change >= 0 ? change : null);
         this.cart.set([]);
-        this.note.set('');
+        this.amountReceived.set(null);
         this.loadStock();
       },
       error: (err) => {

@@ -5,6 +5,7 @@ import { StockService } from '../../../core/services/stock.service';
 import { ProductsService } from '../../../core/services/products.service';
 import { SitesService } from '../../../core/services/sites.service';
 import { PermissionService } from '../../../core/services/permission.service';
+import { AuthService } from '../../../core/services/auth.service';
 
 type TabType = 'niveaux' | 'mouvements';
 type ActionType = 'entree' | 'sortie' | 'transfert' | 'ajustement';
@@ -19,6 +20,7 @@ export class StockComponent implements OnInit {
   private svc      = inject(StockService);
   private prodSvc  = inject(ProductsService);
   private siteSvc  = inject(SitesService);
+  private auth     = inject(AuthService);
   readonly perm    = inject(PermissionService);
 
   tab          = signal<TabType>('niveaux');
@@ -43,7 +45,12 @@ export class StockComponent implements OnInit {
 
   ngOnInit() {
     this.prodSvc.getAll().subscribe({ next: r => this.products.set(r.data ?? []) });
-    this.siteSvc.getAll().subscribe({ next: r => this.sites.set(r.data ?? []) });
+    const sessionSites = this.auth.user()?.sites ?? [];
+    if (sessionSites.length > 0) {
+      this.sites.set(sessionSites);
+    } else {
+      this.siteSvc.getAll().subscribe({ next: r => this.sites.set(r.data ?? []) });
+    }
     this.loadLevels();
   }
 

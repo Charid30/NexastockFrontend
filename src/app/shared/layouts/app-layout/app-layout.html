@@ -95,8 +95,12 @@
     <!-- Topbar -->
     <header class="flex h-14 shrink-0 items-center border-b border-gray-200 bg-white px-6">
       <div class="ml-auto flex items-center gap-3">
-        <a routerLink="/app/alertes" class="text-sm text-gray-400 hover:text-gray-700 transition-colors">Alertes</a>
-        <a routerLink="/app/entreprise" class="text-sm text-gray-700 hover:text-gray-900 transition-colors font-medium">Mon entreprise</a>
+        @if (canSeeAlertes()) {
+          <a routerLink="/app/alertes" class="text-sm text-gray-400 hover:text-gray-700 transition-colors">Alertes</a>
+        }
+        @if (canSeeEntreprise()) {
+          <a routerLink="/app/entreprise" class="text-sm text-gray-700 hover:text-gray-900 transition-colors font-medium">Mon entreprise</a>
+        }
       </div>
     </header>
 
